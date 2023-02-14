@@ -1,41 +1,58 @@
+// import { response } from "express";
+
+
 'use strict'
 
-import { response } from "express";
 
 
-function buttonHandler(e){
+function buttonHandler(e) {
     e.preventDefault();
 
-
-
-    function directCall(){
+    async function directCall() {
         console.log("direct call function")
 
-        fetch('https://randomuser.me/api/')
-            .then((res) => response.json())
-            .then((data) => console.log(data))
+        let userData = []
+
+        await fetch('https://randomuser.me/api/')
+            .then((res) => res.json())
+            .then((data) => {
+                // console.log(data['results'][0])
+                let userData = data['results'][0]
+                displayData(userData)
+            })
+            .catch((err) => console.log(err))
+    }
 
 
 
 
+    async function expressCall(e) {
+        e.preventDefault()
+
+        await fetch('/express')
+            .then((res) => res.json())
+            .then((data) => {
+                 console.log("random.js log", data)
+                let userData = data['results'][0]
+                displayData(userData)
+            })
+            .catch((err) => console.log(err))
+    }
+
+    
+    function displayData(userData) {
+              
+        let firstName = userData['name']['first']
+        console.log(firstName)
         let user = document.createElement('p');
-        user.textContent = "Nothing for now!"
+        user.textContent = `${firstName} - das user!`
         document.getElementById('userInfo').appendChild(user);
-        
-
-
-
     }
 
 
-
-    function expressCall(){
-        console.log("express call function")
-    }
-
-
-document.getElementById('directCall').addEventListener('click', directCall);
-document.getElementById('expressCall').addEventListener('click', expressCall);
+    
+    document.getElementById('directCall').addEventListener('click', directCall);
+    document.getElementById('expressCall').addEventListener('click', expressCall);
 
 }
 
